@@ -138,26 +138,36 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var ROOMID, CSRF_TOKEN;
-var banList = [];
+var currentBlockList = [];
+var blockList = [];
 function main() {
     return __awaiter(this, void 0, void 0, function () {
+        var _this = this;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     ROOMID = window.BilibiliLive.ROOMID;
                     CSRF_TOKEN = getCookie('bili_jct');
-                    return [4 /*yield*/, getBanList(ROOMID, 1)];
+                    return [4 /*yield*/, getBlockList(ROOMID, 1)];
                 case 1:
-                    _a.sent();
-                    $('.upper-right-ctnr').prepend('<div id="wryyyyyy" style="color:#ff38af;" class="right-action-ctnr live-skin-normal-a-text pointer dp-i-block primary btn p-relative"><i class="icon-font icon-set-up v-middle"></i><span data-v-61bb705a="" class="action-text v-middle dp-i-block">禁言脚本哥</span></div>');
-                    $('.admin-drop-ctnr').append('<p data-v-61bb705a="" class="drop-menu-item ts-dot-4">一键禁言脚本哥</p>');
-                    $('#wryyyyyy').click(function (e) {
-                        //sendToastInfo('你好',1000,e);
-                        //let ret = await ban(405793756, 720);
-                        //if (ret) {
-                        //sendToastInfo('封禁成功', 1000, e);
-                        //}
-                    });
+                    currentBlockList = _a.sent();
+                    console.log(currentBlockList.length);
+                    $('.admin-drop-ctnr').append('<p id="wryyyyyy" data-v-61bb705a="" class="drop-menu-item ts-dot-4">一键禁言脚本哥</p>');
+                    $('.admin-drop-ctnr').append('<p id="clear" data-v-61bb705a="" class="drop-menu-item ts-dot-4">捡漏</p>');
+                    $('#wryyyyyy').click(function (e) { return __awaiter(_this, void 0, void 0, function () {
+                        var ret;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, block(405793756, 720)];
+                                case 1:
+                                    ret = _a.sent();
+                                    if (ret) {
+                                        sendToastInfo('封禁成功', 1000, e);
+                                    }
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); });
                     return [2 /*return*/];
             }
         });
@@ -168,7 +178,7 @@ function main() {
  * @param userId
  * @param time
  */
-function ban(userId, time) {
+function block(userId, time) {
     return __awaiter(this, void 0, void 0, function () {
         var ret;
         return __generator(this, function (_a) {
@@ -193,10 +203,10 @@ function ban(userId, time) {
                 case 1:
                     ret = _a.sent();
                     if (!(ret.code == -400)) return [3 /*break*/, 5];
-                    return [4 /*yield*/, unban(userId)];
+                    return [4 /*yield*/, unblock(userId)];
                 case 2:
                     if (!_a.sent()) return [3 /*break*/, 4];
-                    return [4 /*yield*/, ban(userId, time)];
+                    return [4 /*yield*/, block(userId, time)];
                 case 3: 
                 //加 大 力 度
                 return [2 /*return*/, _a.sent()];
@@ -219,30 +229,32 @@ function ban(userId, time) {
  *
  * @param id
  */
-function unban(id) {
+function unblock(userId) {
     return __awaiter(this, void 0, void 0, function () {
-        var ret;
+        var id, ret;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, $.ajax({
-                        type: 'post',
-                        url: '//api.live.bilibili.com/banned_service/v1/Silent/del_room_block_user',
-                        crossDomain: true,
-                        dataType: 'json',
-                        data: {
-                            roomid: ROOMID,
-                            id: id,
-                            csrf: CSRF_TOKEN,
-                            csrf_token: CSRF_TOKEN,
-                            visit_id: null
-                        },
-                        xhrFields: {
-                            withCredentials: true
-                        }
-                    })];
+                case 0:
+                    id = currentBlockList.find(function (element) { return element.uid === userId; }).id;
+                    return [4 /*yield*/, $.ajax({
+                            type: 'post',
+                            url: '//api.live.bilibili.com/banned_service/v1/Silent/del_room_block_user',
+                            crossDomain: true,
+                            dataType: 'json',
+                            data: {
+                                roomid: ROOMID,
+                                id: id,
+                                csrf: CSRF_TOKEN,
+                                csrf_token: CSRF_TOKEN,
+                                visit_id: null
+                            },
+                            xhrFields: {
+                                withCredentials: true
+                            }
+                        })];
                 case 1:
                     ret = _a.sent();
-                    if (ret.data.code == 0) {
+                    if (ret.code == 0) {
                         return [2 /*return*/, true];
                     }
                     return [2 /*return*/, false];
@@ -255,11 +267,11 @@ function unban(id) {
  * @param roomId
  * @param page
  */
-function getBanList(roomId, page) {
+function getBlockList(roomId, page) {
     return __awaiter(this, void 0, void 0, function () {
-        var ret, _i, _a, element;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var ret, array, _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0: return [4 /*yield*/, $.ajax({
                         type: 'get',
                         url: '//api.live.bilibili.com/liveact/ajaxGetBlockList',
@@ -274,16 +286,13 @@ function getBanList(roomId, page) {
                         }
                     })];
                 case 1:
-                    ret = _b.sent();
+                    ret = _c.sent();
                     if (!(ret.code === 0 && ret.data.length > 0)) return [3 /*break*/, 3];
-                    for (_i = 0, _a = ret.data; _i < _a.length; _i++) {
-                        element = _a[_i];
-                        //console.log(element);
-                        banList.push(element);
-                    }
-                    return [4 /*yield*/, getBanList(roomId, page + 1)];
-                case 2: return [2 /*return*/, _b.sent()];
-                case 3: return [2 /*return*/, true];
+                    array = ret.data;
+                    _b = (_a = array).concat;
+                    return [4 /*yield*/, getBlockList(roomId, page + 1)];
+                case 2: return [2 /*return*/, _b.apply(_a, [_c.sent()])];
+                case 3: return [2 /*return*/, []];
             }
         });
     });
@@ -300,17 +309,17 @@ function getCookie(name) {
 }
 ;
 function sendToastInfo(text, time, e) {
-    sendToast(text, 'info', time, e.clientX, e.clientY);
+    sendToast(text, 'info', time, e);
 }
 function sendToastError(text, time, e) {
-    sendToast(text, 'error', time, e.clientX, e.clientY);
+    sendToast(text, 'error', time, e);
 }
 function sendToastWarning(text, time, e) {
-    sendToast(text, 'caution', time, e.clientX, e.clientY);
+    sendToast(text, 'caution', time, e);
 }
-function sendToast(text, type, time, clientX, clientY) {
+function sendToast(text, type, time, e) {
     var id = (new Date()).valueOf();
-    $('body').append("\n        <div class=\"link-toast " + type + "\" msg-id=\"" + id + "\" style=\"left: " + (clientX + 10) + "px; top: " + (clientY + 20) + "px;\">\n            <span class=\"toast-text\">" + text + "</span>\n        </div>\n    ");
+    $('body').append("\n        <div class=\"link-toast " + type + "\" msg-id=\"" + id + "\" style=\"left: " + (e.clientX + 10) + "px; top: " + (e.clientY + 20) + "px;\">\n            <span class=\"toast-text\">" + text + "</span>\n        </div>\n    ");
     var ele = $("div.link-toast[msg-id=" + id + "]");
     ele.slideDown('normal', function () {
         setTimeout(function () {
