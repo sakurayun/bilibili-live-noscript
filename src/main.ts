@@ -202,4 +202,4 @@ function sendToast(text, type, time, e: { clientX: number, clientY: number }) {
     });
 }
 
-setTimeout(main, 1000);
+setTimeout(main, 4000);

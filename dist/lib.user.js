@@ -412,7 +412,7 @@ function sendToast(text, type, time, e) {
         }, time);
     });
 }
-setTimeout(main, 1000);
+setTimeout(main, 4000);
 
 
 /***/ })
