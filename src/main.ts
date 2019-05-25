@@ -19,10 +19,12 @@ async function main() {
     ROOMID = (<any>window).BilibiliLive.ROOMID;
     CSRF_TOKEN = getCookie('bili_jct');
 
-    $('.admin-drop-ctnr').append('<p id="wryyyyyy" data-v-61bb705a="" class="drop-menu-item ts-dot-4">重置所有30天禁言<br><b>///需要较长时间///</b></p>');
-    $('.admin-drop-ctnr').append('<p id="clear" data-v-61bb705a="" class="drop-menu-item ts-dot-4">对比最新列表禁言');
+    $('.attention-btn-ctnr').prepend('<div id="wryyyyyy" style="width:unset;background-color: #f47f9e;margin-right:10px;border-radius: 0 4px 4px 0;" data-v-5d947ed0="" class="left-part live-skin-highlight-bg dp-i-block pointer p-relative"><span data-v-5d947ed0="" class="follow-text v-middle d-inline-block">重置所有30天禁言(较为耗时)</span></div>');
+    $('.attention-btn-ctnr').prepend('<div id="clear" style="width:unset;background-color: #999;" data-v-5d947ed0="" class="left-part live-skin-highlight-bg dp-i-block pointer p-relative"><span data-v-5d947ed0="" class="follow-text v-middle d-inline-block">对比最新列表禁言</span></div>');
     $('#wryyyyyy').click(async (e) => {
-        sendToastInfo('获取当前禁言列表,可能需要较长时间...', 1000, e);
+        sendToastInfo('获取在线黑名单,可能需要较长时间...', 2000, e);
+        blockList = await getOnlineBlockList();
+        sendToastInfo('获取当前禁言列表,可能需要较长时间...', 2000, e);
         currentBlockList = await getCurrentBlockList(ROOMID);
 
         for (var i = 0; i < blockList.length; i++) {
@@ -35,9 +37,9 @@ async function main() {
         };
     });
     $('#clear').click(async (e) => {
-        sendToastInfo('获取在线黑名单,可能需要较长时间...', 1000, e);
+        sendToastInfo('获取在线黑名单,可能需要较长时间...', 2000, e);
         blockList = await getOnlineBlockList();
-        sendToastInfo('获取当前禁言列表,可能需要较长时间...', 1000, e);
+        sendToastInfo('获取当前禁言列表,可能需要较长时间...', 2000, e);
         currentBlockList = await getCurrentBlockList(ROOMID);
 
         let arr = [];
