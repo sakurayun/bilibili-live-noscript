@@ -5,6 +5,8 @@
 // @description  bug还有一吨...
 // @author       bilibili-dd-center/3Shain
 // @include      https://live.bilibili.com/*
+// @downloadURL  https://github.com/bilibili-dd-center/bilibili-live-noscript/raw/master/dist/lib.user.js
+// @updateURL    https://github.com/bilibili-dd-center/bilibili-live-noscript/raw/master/dist/lib.user.js     
 // @grant        none
 // ==/UserScript==
 /******/ (function(modules) { // webpackBootstrap
