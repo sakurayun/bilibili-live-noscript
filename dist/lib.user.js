@@ -102,6 +102,9 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
+/**
+ * main.ts
+ */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -138,45 +141,101 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var ROOMID, CSRF_TOKEN;
-var currentBlockList = [];
+var currentBlockList = new Array();
 var blockList = [];
 function main() {
     return __awaiter(this, void 0, void 0, function () {
         var _this = this;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    ROOMID = window.BilibiliLive.ROOMID;
-                    CSRF_TOKEN = getCookie('bili_jct');
-                    return [4 /*yield*/, getBlockList(ROOMID, 1)];
-                case 1:
-                    currentBlockList = _a.sent();
-                    console.log(currentBlockList.length);
-                    $('.admin-drop-ctnr').append('<p id="wryyyyyy" data-v-61bb705a="" class="drop-menu-item ts-dot-4">一键禁言脚本哥</p>');
-                    $('.admin-drop-ctnr').append('<p id="clear" data-v-61bb705a="" class="drop-menu-item ts-dot-4">捡漏</p>');
-                    $('#wryyyyyy').click(function (e) { return __awaiter(_this, void 0, void 0, function () {
-                        var ret;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, block(405793756, 720)];
-                                case 1:
-                                    ret = _a.sent();
-                                    if (ret) {
-                                        sendToastInfo('封禁成功', 1000, e);
-                                    }
-                                    return [2 /*return*/];
+            ROOMID = window.BilibiliLive.ROOMID;
+            CSRF_TOKEN = getCookie('bili_jct');
+            $('.admin-drop-ctnr').append('<p id="wryyyyyy" data-v-61bb705a="" class="drop-menu-item ts-dot-4">重置所有30天禁言<br><b>///需要较长时间///</b></p>');
+            $('.admin-drop-ctnr').append('<p id="clear" data-v-61bb705a="" class="drop-menu-item ts-dot-4">对比最新列表禁言');
+            $('#wryyyyyy').click(function (e) { return __awaiter(_this, void 0, void 0, function () {
+                var i;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            sendToastInfo('获取当前禁言列表,可能需要较长时间...', 1000, e);
+                            return [4 /*yield*/, getCurrentBlockList(ROOMID)];
+                        case 1:
+                            currentBlockList = _a.sent();
+                            for (i = 0; i < blockList.length; i++) {
+                                (function (i) {
+                                    var _this = this;
+                                    setTimeout(function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, block(blockList[i], 720)];
+                                                case 1:
+                                                    if (_a.sent())
+                                                        sendToastWarning("\u5DF2\u5C01\u7981\u7528\u6237" + blockList[i], 200, e);
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }, 300 * i);
+                                })(i);
                             }
-                        });
-                    }); });
-                    return [2 /*return*/];
-            }
+                            ;
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+            $('#clear').click(function (e) { return __awaiter(_this, void 0, void 0, function () {
+                var arr, _loop_1, _i, blockList_1, v, i;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            sendToastInfo('获取在线黑名单,可能需要较长时间...', 1000, e);
+                            return [4 /*yield*/, getOnlineBlockList()];
+                        case 1:
+                            blockList = _a.sent();
+                            sendToastInfo('获取当前禁言列表,可能需要较长时间...', 1000, e);
+                            return [4 /*yield*/, getCurrentBlockList(ROOMID)];
+                        case 2:
+                            currentBlockList = _a.sent();
+                            arr = [];
+                            _loop_1 = function (v) {
+                                if (currentBlockList.findIndex(function (ele) { return ele.uid === v; }) === -1) {
+                                    arr.push(v);
+                                }
+                            };
+                            for (_i = 0, blockList_1 = blockList; _i < blockList_1.length; _i++) {
+                                v = blockList_1[_i];
+                                _loop_1(v);
+                            }
+                            if (arr.length === 0) {
+                                sendToastInfo('已是最新列表', 5000, e);
+                            }
+                            for (i = 0; i < arr.length; i++) {
+                                (function (i) {
+                                    var _this = this;
+                                    setTimeout(function () { return __awaiter(_this, void 0, void 0, function () {
+                                        return __generator(this, function (_a) {
+                                            switch (_a.label) {
+                                                case 0: return [4 /*yield*/, block(arr[i], 720)];
+                                                case 1:
+                                                    if (_a.sent())
+                                                        sendToastWarning("\u5DF2\u5C01\u7981\u7528\u6237" + arr[i], 200, e);
+                                                    return [2 /*return*/];
+                                            }
+                                        });
+                                    }); }, 300 * i);
+                                })(i);
+                            }
+                            ;
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+            return [2 /*return*/];
         });
     });
 }
 /**
- *
+ * 禁言用户
  * @param userId
- * @param time
+ * @param time 禁言时间/小时
  */
 function block(userId, time) {
     return __awaiter(this, void 0, void 0, function () {
@@ -226,7 +285,7 @@ function block(userId, time) {
     });
 }
 /**
- *
+ * 解除禁言
  * @param id
  */
 function unblock(userId) {
@@ -263,11 +322,12 @@ function unblock(userId) {
     });
 }
 /**
- *
+ * 获取禁言列表
  * @param roomId
  * @param page
  */
-function getBlockList(roomId, page) {
+function getCurrentBlockList(roomId, page) {
+    if (page === void 0) { page = 1; }
     return __awaiter(this, void 0, void 0, function () {
         var ret, array, _a, _b;
         return __generator(this, function (_c) {
@@ -290,9 +350,26 @@ function getBlockList(roomId, page) {
                     if (!(ret.code === 0 && ret.data.length > 0)) return [3 /*break*/, 3];
                     array = ret.data;
                     _b = (_a = array).concat;
-                    return [4 /*yield*/, getBlockList(roomId, page + 1)];
+                    return [4 /*yield*/, getCurrentBlockList(roomId, page + 1)];
                 case 2: return [2 /*return*/, _b.apply(_a, [_c.sent()])];
                 case 3: return [2 /*return*/, []];
+            }
+        });
+    });
+}
+function getOnlineBlockList() {
+    return __awaiter(this, void 0, void 0, function () {
+        var ret;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, $.ajax({
+                        type: 'get',
+                        url: 'https://raw.githubusercontent.com/bilibili-dd-center/bilibili-live-noscript/master/blacklist.txt',
+                        dataType: 'text'
+                    })];
+                case 1:
+                    ret = _a.sent();
+                    return [2 /*return*/, ret.split(/[\s\n]/).map(function (value) { return Number(value); })];
             }
         });
     });
@@ -319,7 +396,7 @@ function sendToastWarning(text, time, e) {
 }
 function sendToast(text, type, time, e) {
     var id = (new Date()).valueOf();
-    $('body').append("\n        <div class=\"link-toast " + type + "\" msg-id=\"" + id + "\" style=\"left: " + (e.clientX + 10) + "px; top: " + (e.clientY + 20) + "px;\">\n            <span class=\"toast-text\">" + text + "</span>\n        </div>\n    ");
+    $('body').append("\n        <div class=\"link-toast " + type + "\" msg-id=\"" + id + "\" style=\"left: " + (e.clientX + 20) + "px; top: " + (e.clientY + 20) + "px;\">\n            <span class=\"toast-text\">" + text + "</span>\n        </div>\n    ");
     var ele = $("div.link-toast[msg-id=" + id + "]");
     ele.slideDown('normal', function () {
         setTimeout(function () {

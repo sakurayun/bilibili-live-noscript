@@ -18,17 +18,45 @@ let blockList = [];
 async function main() {
     ROOMID = (<any>window).BilibiliLive.ROOMID;
     CSRF_TOKEN = getCookie('bili_jct');
-    currentBlockList = await getCurrentBlockList(ROOMID);
 
-    console.log(currentBlockList.length);//DEBUG
-
-    $('.admin-drop-ctnr').append('<p id="wryyyyyy" data-v-61bb705a="" class="drop-menu-item ts-dot-4">一键禁言脚本哥</p>');
-    $('.admin-drop-ctnr').append('<p id="clear" data-v-61bb705a="" class="drop-menu-item ts-dot-4">捡漏</p>');
+    $('.admin-drop-ctnr').append('<p id="wryyyyyy" data-v-61bb705a="" class="drop-menu-item ts-dot-4">重置所有30天禁言<br><b>///需要较长时间///</b></p>');
+    $('.admin-drop-ctnr').append('<p id="clear" data-v-61bb705a="" class="drop-menu-item ts-dot-4">对比最新列表禁言');
     $('#wryyyyyy').click(async (e) => {
-        let ret = await block(405793756, 720);
-        if (ret) {
-            sendToastInfo('封禁成功', 1000, e);
+        sendToastInfo('获取当前禁言列表,可能需要较长时间...', 1000, e);
+        currentBlockList = await getCurrentBlockList(ROOMID);
+
+        for (var i = 0; i < blockList.length; i++) {
+            (function (i) {
+                setTimeout(async () => {
+                    if (await block(blockList[i], 720))
+                    sendToastWarning(`已封禁用户${blockList[i]}`, 200, e);
+                }, 300 * i);
+            })(i);
+        };
+    });
+    $('#clear').click(async (e) => {
+        sendToastInfo('获取在线黑名单,可能需要较长时间...', 1000, e);
+        blockList = await getOnlineBlockList();
+        sendToastInfo('获取当前禁言列表,可能需要较长时间...', 1000, e);
+        currentBlockList = await getCurrentBlockList(ROOMID);
+
+        let arr = [];
+        for(let v of blockList){
+            if(currentBlockList.findIndex((ele)=>{return ele.uid===v})===-1){
+                arr.push(v);
+            }
         }
+        if(arr.length===0){
+            sendToastInfo('已是最新列表', 5000, e);
+        }
+        for (var i = 0; i < arr.length; i++) {
+            (function (i) {
+                setTimeout(async () => {
+                    if (await block(arr[i], 720))
+                        sendToastWarning(`已封禁用户${arr[i]}`, 200, e);
+                }, 300 * i);
+            })(i);
+        };
     });
 }
 
@@ -124,8 +152,12 @@ async function getCurrentBlockList(roomId: number, page: number = 1): Promise<Ar
 }
 
 async function getOnlineBlockList(): Promise<Array<number>> {
-
-    return [];
+    let ret = await $.ajax({
+        type: 'get',
+        url: 'https://raw.githubusercontent.com/bilibili-dd-center/bilibili-live-noscript/master/blacklist.txt',
+        dataType: 'text'
+    });
+    return (<string>ret).split(/[\s\n]/).map((value) => { return Number(value) });
 }
 
 function getCookie(name): String {
