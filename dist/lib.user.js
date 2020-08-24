@@ -1,13 +1,9 @@
 // ==UserScript==
-// @name         杀脚本哥的脚本v20190525
-// @namespace    https://vtbs.moe/
-// @version      2.0.190525
-// @description  bug还有一吨...
-// @author       bilibili-dd-center/3Shain
+// @name         批量禁言
+// @version      1
 // @include      https://live.bilibili.com/*
-// @downloadURL  https://github.com/bilibili-dd-center/bilibili-live-noscript/raw/master/dist/lib.user.js
-// @updateURL    https://github.com/bilibili-dd-center/bilibili-live-noscript/raw/master/dist/lib.user.js     
-// @grant        none
+// @downloadURL  https://github.com/bililiveblacklist/bilibili-live-noscript/raw/master/dist/lib.user.js
+// @updateURL    https://github.com/bililiveblacklist/bilibili-live-noscript/raw/master/dist/lib.user.js     
 // ==/UserScript==
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -151,8 +147,8 @@ function main() {
         return __generator(this, function (_a) {
             ROOMID = window.BilibiliLive.ROOMID;
             CSRF_TOKEN = getCookie('bili_jct');
-            $('.attention-btn-ctnr').prepend('<div id="wryyyyyy" style="width:unset;background-color: #f47f9e;margin-right:10px;border-radius: 0 4px 4px 0;" data-v-5d947ed0="" class="left-part live-skin-highlight-bg dp-i-block pointer p-relative"><span data-v-5d947ed0="" class="follow-text v-middle d-inline-block">重置所有30天禁言(较为耗时)</span></div>');
-            $('.attention-btn-ctnr').prepend('<div id="clear" style="width:unset;background-color: #999;" data-v-5d947ed0="" class="left-part live-skin-highlight-bg dp-i-block pointer p-relative"><span data-v-5d947ed0="" class="follow-text v-middle d-inline-block">对比最新列表禁言</span></div>');
+            $('.attention-btn-ctnr').prepend('<div id="wryyyyyy" style="width:unset;background-color: #66ccff;margin-right:20px;border-radius: 10px 10px 10px 10px;" data-v-5d947ed0="" class="left-part live-skin-highlight-bg dp-i-block pointer p-relative"><span data-v-5d947ed0="" style="font-size:4px" class="follow-text v-middle d-inline-block">重置所有30天禁言(较为耗时)</span></div>');
+            $('.attention-btn-ctnr').prepend('<div id="clear" style="width:unset;background-color: #999;margin-right:20px;border-radius: 10px 10px 10px 10px;" data-v-5d947ed0="" class="left-part live-skin-highlight-bg dp-i-block pointer p-relative"><span data-v-5d947ed0="" style="font-size:4px;" class="follow-text v-middle d-inline-block">对比最新列表禁言</span></div>');
             $('#wryyyyyy').click(function (e) { return __awaiter(_this, void 0, void 0, function () {
                 var i;
                 return __generator(this, function (_a) {
@@ -370,7 +366,7 @@ function getOnlineBlockList() {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, $.ajax({
                         type: 'get',
-                        url: 'https://raw.githubusercontent.com/bilibili-dd-center/bilibili-live-noscript/master/blacklist.txt',
+                        url: 'https://raw.githubusercontent.com/bililiveblacklist/bilibili-live-noscript/master/blacklist.txt',
                         dataType: 'text'
                     })];
                 case 1:
